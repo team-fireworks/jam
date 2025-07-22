@@ -9,4 +9,7 @@ target
 **/.DS_Store
 
 assets
-jam.toml
+Springroll.toml
+
+_inspo
+test

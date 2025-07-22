@@ -1,6 +1,6 @@
 use clap::Args;
-use jam::config::Config;
-use jam::spritegen::spritegen;
+use springroll::config::Config;
+use springroll::spritegen::spritegen;
 
 #[derive(Debug, Args)]
 pub struct GenerateCommand {}

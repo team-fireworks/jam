@@ -1,8 +1,14 @@
+use anyhow::Context;
 use reqwest::Url;
 use serde::Deserialize;
 
+use crate::sources::SpriteSource;
+
 const MATERIAL_SYMBOLS_URL: &str =
     "https://raw.githubusercontent.com/google/material-design-icons/refs/heads/master/symbols/web";
+
+const PATH: &str = "<path ";
+const PATH_REPLACE_WITH_WHITE_FILL: &str = "<path fill=\"#fff\" ";
 
 #[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq, Hash)]
 #[serde(rename_all = "snake_case")]
@@ -41,7 +47,6 @@ impl MaterialSymbolsVariant {
 }
 
 #[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq, Hash)]
-#[serde(rename_all = "snake_case")]
 pub enum MaterialSymbolsSize {
     #[serde(rename = "20px")]
     Size20px,
@@ -66,7 +71,6 @@ impl MaterialSymbolsSize {
 }
 
 #[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq, Hash)]
-#[serde(rename_all = "snake_case")]
 pub enum MaterialSymbolsWeight {
     #[serde(rename = "100")]
     Weight100,
@@ -137,6 +141,7 @@ pub struct MaterialSymbolsSource {
 }
 
 impl MaterialSymbolsSource {
+    #[must_use]
     pub fn file_name(&self) -> String {
         let inner = format!(
             "{}{}{}",
@@ -161,6 +166,7 @@ impl MaterialSymbolsSource {
         )
     }
 
+    #[must_use]
     pub fn url(&self) -> anyhow::Result<Url> {
         Ok(Url::parse(
             format!(
@@ -174,19 +180,23 @@ impl MaterialSymbolsSource {
         )?)
     }
 
-    pub async fn fetch(&self, reqwest: reqwest::Client) -> anyhow::Result<()> {
+    pub async fn fetch(&self, reqwest: reqwest::Client) -> anyhow::Result<SpriteSource> {
         let url = self.url()?;
 
-        println!("{}", url);
-
-        let response = reqwest
+        let svg = reqwest
             .get(url)
             .header("cache-control", "public, max-age=3600")
             .send()
-            .await?;
+            .await
+            .context("failed to fetch material symbols")?
+            .text()
+            .await
+            .context("failed to parse material symbols as text")?
+            .replace(PATH, PATH_REPLACE_WITH_WHITE_FILL);
 
-        println!("{}", response.text().await?);
+        let tree = usvg::Tree::from_str(svg.as_str(), &usvg::Options::default())
+            .context("failed to parse material symbols as svg")?;
 
-        Ok(())
+        Ok(SpriteSource::Vector(tree))
     }
 }

@@ -11,11 +11,12 @@ easily reference them in code, including Roblox games.
 ## Later:tm:
 
 - Non-square sprites
+- Non-square spritesheets
 
 ```toml
 [spritesheets.icons.imagegen]
 output_dir = "assets/spritesheets/icons"
-size_xy = 512
+spritesheet_size = 512
 sprites_per_row = 6
 
 [spritesheets.icons.codegen]
@@ -29,7 +30,7 @@ close = { material_symbols = "close", style = "filled" }
 
 [spritesheets.logos.imagegen]
 output_dir = "assets/spritesheets/logos"
-size_xy = 1280
+spritesheet_size = 1280
 sprites_per_row = 3
 
 [spritesheets.logos.codegen]
