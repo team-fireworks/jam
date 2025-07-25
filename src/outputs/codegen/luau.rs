@@ -17,7 +17,7 @@ use crate::{
 #[serde(default)]
 pub struct LuauCodegenOutput {
     pub path: PathBuf,
-    pub include_sprite_types: bool,
+    pub include_prelude_types: bool,
     pub new_luau_solver: bool,
     #[serde(default = "default_true")]
     pub freeze_tables: bool,
@@ -106,7 +106,7 @@ impl LuauCodegenOutput {
         code.push('\n');
 
         code.push('\n');
-        if self.include_sprite_types {
+        if self.include_prelude_types {
             code.push_str(&self.prelude_types());
             code.push('\n');
         }
@@ -185,7 +185,7 @@ impl LuauCodegenOutput {
             sprite.height,
         );
 
-        if self.include_sprite_types {
+        if self.include_prelude_types {
             format!("{}({inner})", self.ident_sprite())
         } else {
             self.wrap_freeze(inner)

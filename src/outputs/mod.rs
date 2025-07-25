@@ -1,7 +1,10 @@
-use anyhow::{Result, bail};
+use anyhow::Result;
 use serde::Deserialize;
 
-use crate::spritegen::Spritesheet;
+use crate::{
+    outputs::codegen::typescript_declarations::TypeScriptDeclarationsCodegenOutput,
+    spritegen::Spritesheet,
+};
 
 use self::codegen::luau::LuauCodegenOutput;
 
@@ -13,13 +16,15 @@ pub mod dir;
 #[non_exhaustive]
 pub enum OutputSpecifier {
     Luau(LuauCodegenOutput),
+    #[serde(alias = "dts")]
+    TypeScriptDeclarations(TypeScriptDeclarationsCodegenOutput),
 }
 
 impl OutputSpecifier {
     pub async fn output(&self, name: &str, spritesheet: &Spritesheet) -> Result<()> {
         match self {
             OutputSpecifier::Luau(luau) => luau.output(name, spritesheet).await,
-            _ => bail!("not yet implemented"),
+            OutputSpecifier::TypeScriptDeclarations(dts) => dts.output(name, spritesheet).await,
         }
     }
 }
