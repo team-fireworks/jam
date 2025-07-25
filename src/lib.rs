@@ -1,5 +1,5 @@
-pub mod codegen;
 pub mod config;
+pub mod outputs;
 pub mod sources;
 pub mod spritegen;
 

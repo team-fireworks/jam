@@ -1,6 +1,6 @@
-# Jam
+# Springroll
 
-Jam is a command line tool used to pack images into spritesheets and
+Springroll is a command line tool used to pack images into spritesheets and
 easily reference them in code, including Roblox games.
 
 ## Features

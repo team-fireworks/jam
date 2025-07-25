@@ -18,15 +18,15 @@ pub struct Spritesheet {
     pub sprites: HashMap<String, Sprite>,
 }
 
-pub async fn spritegen(config: &Config) -> anyhow::Result<Vec<Spritesheet>> {
+pub async fn spritegen(config: &Config) -> anyhow::Result<HashMap<&str, Spritesheet>> {
     let reqwest = reqwest::Client::builder()
         .build()
         .context("failed to create reqwest client")?;
 
-    let mut spritesheets: Vec<Spritesheet> = Vec::new();
+    let mut spritesheets: HashMap<&str, Spritesheet> = HashMap::new();
 
     for (spritesheet_key, spritesheet) in &config.spritesheets {
-        let spritesheet_size = spritesheet.imagegen.spritesheet_size;
+        let spritesheet_size = spritesheet.spritegen.spritesheet_size;
 
         let mut pixmaps: Vec<Pixmap> = Vec::new();
         let mut pixmap_index = 0;
@@ -38,7 +38,7 @@ pub async fn spritegen(config: &Config) -> anyhow::Result<Vec<Spritesheet>> {
         let mut current_y: i32 = 0;
         let mut highest_y_in_row: i32 = 0;
 
-        let sprite_size = spritesheet_size / spritesheet.imagegen.sprites_per_row;
+        let sprite_size = spritesheet_size / spritesheet.spritegen.sprites_per_row;
 
         let sprites = spritesheet.sprites.clone();
         let mut sorted_sprites: Vec<(&String, &crate::sources::SpriteSpecifier)> =
@@ -68,8 +68,6 @@ pub async fn spritegen(config: &Config) -> anyhow::Result<Vec<Spritesheet>> {
                         sprite_size as f32 / height,
                     )
                     .post_translate(current_x as f32, current_y as f32);
-
-                    dbg!(transform);
 
                     #[cfg(feature = "indev")]
                     {
@@ -157,7 +155,7 @@ pub async fn spritegen(config: &Config) -> anyhow::Result<Vec<Spritesheet>> {
             index += 1;
         }
 
-        spritesheets.push(Spritesheet {
+        spritesheets.insert(spritesheet_key, Spritesheet {
             pixmaps,
             sprites: sprites_for_spritesheet,
         });
