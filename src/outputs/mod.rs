@@ -2,7 +2,10 @@ use anyhow::Result;
 use serde::Deserialize;
 
 use crate::{
-    outputs::codegen::typescript_declarations::TypeScriptDeclarationsCodegenOutput,
+    outputs::codegen::{
+        typescript::TypeScriptCodegenOutput,
+        typescript_declarations::TypeScriptDeclarationsCodegenOutput,
+    },
     spritegen::Spritesheet,
 };
 
@@ -16,7 +19,9 @@ pub mod dir;
 #[non_exhaustive]
 pub enum OutputSpecifier {
     Luau(LuauCodegenOutput),
-    #[serde(alias = "dts")]
+    #[serde(rename = "typescript", alias = "ts")]
+    TypeScript(TypeScriptCodegenOutput),
+    #[serde(rename = "typescript_declarations", alias = "dts")]
     TypeScriptDeclarations(TypeScriptDeclarationsCodegenOutput),
 }
 
@@ -24,6 +29,7 @@ impl OutputSpecifier {
     pub async fn output(&self, name: &str, spritesheet: &Spritesheet) -> Result<()> {
         match self {
             OutputSpecifier::Luau(luau) => luau.output(name, spritesheet).await,
+            OutputSpecifier::TypeScript(ts) => ts.output(name, spritesheet).await,
             OutputSpecifier::TypeScriptDeclarations(dts) => dts.output(name, spritesheet).await,
         }
     }

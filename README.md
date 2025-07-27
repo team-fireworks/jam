@@ -1,58 +1,75 @@
 # Springroll
 
-Springroll is a command line tool used to pack images into spritesheets and
-easily reference them in code, including Roblox games.
+Spritesheets as code command line tool.
+
+> [!WARNING]
+> This is my first actual Rust project. I struggled making this, so PRs are very
+> welcome :)
 
 ## Features
 
-- Generates Luau or Typescript code so you can use them in your game
-- Bring in files, or import from Material Symbols, Font Awesome, etc.
+- Configure everything with a `Springroll.toml` file
+- Use your own images, or source from Material Symbols, Font Awesome, Luicide,
+  Fluent, etc. with more to come
+- Assortment of outputs: PNGs, Luau, TypeScript, JSON, TOML, YAML, etc. with
+  decent formatting and more to come
+- Customize spritesheet size and sprites per row
+- Alpha bleeding for images
 
-## Later:tm:
+## Coming Later™
 
-- Non-square sprites
-- Non-square spritesheets
+- Spritesheets and sprites that aren't squares, will probably allow the user to
+  specify the width/height of sprites
+- Blazingly fast
 
-```toml
-[spritesheets.icons.imagegen]
-output_dir = "assets/spritesheets/icons"
+## Configuration
+
+Spritesheets are declared in the `[spritesheets]` object:
+
+```TOML
+[spritesheets.icons.spritegen]
 spritesheet_size = 512
 sprites_per_row = 6
 
-[spritesheets.icons.codegen]
-output = "src/spritesheets/icons"
-luau = true
+[[spritesheets.icons.outputs]]
+# ...
 
 [spritesheets.icons.sprites]
-dropdown = { material_symbols = "arrow_drop_down", style = "filled" }
-heartbroken = { material_symbols = "broken_heart", style = "filled" }
-close = { material_symbols = "close", style = "filled" }
-
-[spritesheets.logos.imagegen]
-output_dir = "assets/spritesheets/logos"
-spritesheet_size = 1280
-sprites_per_row = 3
-
-[spritesheets.logos.codegen]
-output = "src/spritesheets/logos"
-luau = true
-
-[spritesheets.logos.sprites]
-etoh = { file = "assets/logos/etoh" }
-tct = { file = "assets/logos/etoh" }
-wth = { file = "assets/logos/etoh" }
+# ...
 ```
 
-To install dependencies:
+- `spritegen`:
+- `outputs`:
+- `sprites`:
 
-```bash
-bun install
-```
+### Sources
 
-To run:
+#### Path
 
-```bash
-bun run src/index.ts
-```
+#### Material Symbols
 
-This project was created using `bun init` in bun v1.2.2. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+#### Font Awesome
+
+#### Fluent
+
+#### Luicide
+
+### Outputs
+
+#### Images
+
+#### Luau
+
+#### TypeScript
+
+#### TypeScript Declarations (`d.ts`)
+
+#### JSON
+
+#### TOML
+
+#### YAML
+
+## License
+
+Springroll is licensed under the Mozilla Public License 2.0.

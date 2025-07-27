@@ -1,8 +1,5 @@
 // https://github.com/lucacasonato/cases/blob/main/mod.ts
 
-// use fancy_regex::Regex;
-// use itertools::intersperse;
-// use lazy_static::lazy_static;
 use serde::Deserialize;
 
 #[derive(Default, Debug, Deserialize, Clone, PartialEq, Eq)]
@@ -13,6 +10,7 @@ pub enum Casing {
     Snake,
     #[serde(alias = "SCREAMING_SNAKE_casing")]
     ScreamingSnake,
+    // TODO: implement ts...
     // #[serde(alias = "kebab-case")]
     // Kebab,
     // #[serde(alias = "SCREAMING-KEBAB-CASE")]
