@@ -2,26 +2,29 @@ use std::path::PathBuf;
 
 use anyhow::{Context, Result};
 use serde::Deserialize;
-use tokio::fs;
+use std::fs;
 
 use super::create_disclaimer_comment;
-use crate::{match_casings, spritegen::Spritesheet, util::casings::Casing};
+use crate::{Spritesheet, match_casings, util::casings::Casing};
 
-#[derive(Default, Debug, Deserialize, Clone)]
-#[serde(default)]
+#[derive(Default, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
+#[cfg_attr(feature = "serde", serde(default))]
 pub struct TypeScriptDeclarationsCodegenOutput {
     pub path: PathBuf,
     pub include_prelude_types: bool,
-    #[serde(default = "default_camel")]
-    pub type_casing: Casing,
-    #[serde(default = "default_pascal")]
+    #[cfg_attr(feature = "serde", serde(default = "default_camel"))]
     pub field_casing: Casing,
+    #[cfg_attr(feature = "serde", serde(default = "default_pascal"))]
+    pub type_casing: Casing,
 }
 
+#[cfg(feature = "serde")]
 fn default_camel() -> Casing {
     Casing::Camel
 }
 
+#[cfg(feature = "serde")]
 fn default_pascal() -> Casing {
     Casing::Pascal
 }
@@ -29,7 +32,6 @@ fn default_pascal() -> Casing {
 impl TypeScriptDeclarationsCodegenOutput {
     pub async fn output(&self, name: &str, spritesheet: &Spritesheet) -> Result<()> {
         fs::write(&self.path, self.codegen(name, spritesheet))
-            .await
             .context("failed to save dts codegen output")?;
 
         Ok(())

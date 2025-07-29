@@ -2,25 +2,27 @@ use std::path::PathBuf;
 
 use anyhow::{Context, Result};
 use serde::Deserialize;
-use tokio::fs;
+use std::fs;
 
 use super::create_disclaimer_comment;
-use crate::{match_casings, spritegen::Spritesheet, util::casings::Casing};
+use crate::{Spritesheet, match_casings, util::casings::Casing};
 
-#[derive(Default, Debug, Deserialize, Clone)]
-#[serde(default)]
+#[derive(Default, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
+#[cfg_attr(feature = "serde", serde(default))]
 pub struct TypeScriptCodegenOutput {
     pub path: PathBuf,
     pub export: TypeScriptExport,
     pub include_prelude_types: bool,
-    #[serde(default = "default_camel")]
+    #[cfg_attr(feature = "serde", serde(default = "default_camel"))]
     pub type_casing: Casing,
-    #[serde(default = "default_pascal")]
+    #[cfg_attr(feature = "serde", serde(default = "default_pascal"))]
     pub field_casing: Casing,
 }
 
-#[derive(Default, Debug, Deserialize, Clone)]
-#[serde(rename_all = "snake_case")]
+#[derive(Default, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
 pub enum TypeScriptExport {
     #[default]
     /// many of `export const ...`
@@ -33,10 +35,12 @@ pub enum TypeScriptExport {
     ExportNamespace,
 }
 
+#[cfg(feature = "serde")]
 fn default_camel() -> Casing {
     Casing::Camel
 }
 
+#[cfg(feature = "serde")]
 fn default_pascal() -> Casing {
     Casing::Pascal
 }
@@ -44,7 +48,6 @@ fn default_pascal() -> Casing {
 impl TypeScriptCodegenOutput {
     pub async fn output(&self, name: &str, spritesheet: &Spritesheet) -> Result<()> {
         fs::write(&self.path, self.codegen(name, spritesheet))
-            .await
             .context("failed to save dts codegen output")?;
 
         Ok(())

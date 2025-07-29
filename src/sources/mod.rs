@@ -1,42 +1,52 @@
-use self::{
-    fluent::FluentSource, font_awesome::FontAwesomeSource, luicide::LuicideSource,
-    material_symbols::MaterialSymbolsSource, path::PathSource,
-};
 use anyhow::bail;
 use serde::Deserialize;
 use tiny_skia::Pixmap;
 use usvg::Tree;
 
+#[cfg(feature = "source_fluent")]
 pub mod fluent;
+#[cfg(feature = "source_font_awesome")]
 pub mod font_awesome;
+#[cfg(feature = "source_luicide")]
 pub mod luicide;
+#[cfg(feature = "source_material_symbols")]
 pub mod material_symbols;
+#[cfg(feature = "source_path")]
 pub mod path;
 
-#[derive(Debug, Deserialize, Clone, PartialEq, Eq, Hash)]
-#[serde(rename_all = "snake_case")]
-#[serde(untagged)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
+#[cfg_attr(feature = "serde", serde(untagged, rename_all = "snake_case"))]
 #[non_exhaustive]
 pub enum SpriteSpecifier {
-    Path(PathSource),
-    FontAwesome(FontAwesomeSource),
-    MaterialSymbols(MaterialSymbolsSource),
-    Luicide(LuicideSource),
-    Fluent(FluentSource),
+    #[cfg(feature = "source_fluent")]
+    Fluent(self::fluent::FluentSource),
+    #[cfg(feature = "source_font_awesome")]
+    FontAwesome(self::font_awesome::FontAwesomeSource),
+    #[cfg(feature = "source_luicide")]
+    Luicide(self::luicide::LuicideSource),
+    #[cfg(feature = "source_material_symbols")]
+    MaterialSymbols(self::material_symbols::MaterialSymbolsSource),
+    #[cfg(feature = "source_path")]
+    Path(self::path::PathSource),
 }
 
 #[derive(Debug, Clone)]
 pub enum SpriteSource {
-    Raster(Pixmap),
-    Vector(Tree),
+    Pixmap(Pixmap),
+    #[cfg(feature = "svg")]
+    Tree(Tree),
 }
 
 impl SpriteSpecifier {
     pub async fn fetch(&self, reqwest: reqwest::Client) -> anyhow::Result<SpriteSource> {
         Ok(match self {
+            #[cfg(feature = "source_path")]
             Self::Path(path) => path.fetch().await?,
+            #[cfg(feature = "source_material_symbols")]
             Self::MaterialSymbols(material) => material.fetch(reqwest.clone()).await?,
-            _ => bail!("not yet implemented"),
+            #[allow(unreachable_patterns)]
+            _ => bail!("not yet supported"),
         })
     }
 }

@@ -197,6 +197,6 @@ impl MaterialSymbolsSource {
         let tree = usvg::Tree::from_str(svg.as_str(), &usvg::Options::default())
             .context("failed to parse material symbols as svg")?;
 
-        Ok(SpriteSource::Vector(tree))
+        Ok(SpriteSource::Tree(tree))
     }
 }

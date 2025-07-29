@@ -2,29 +2,94 @@
 name = "springroll"
 version = "0.1.0"
 edition = "2024"
+license = "MPL-2.0"
+authors = ["znotfireman <znotfireman@gmail.com>"]
+description = "Spritesheets as code"
+repository = "https://github.com/team-fireworks/springroll"
+include = ["src/**/*", "Cargo.toml", "Cargo.lock", "README.md"]
 
-[dependencies]
-toml = "0.9.2"
-serde = { version = "1.0.219", features = ["derive"] }
-clap = { version = "4.5.41", features = ["derive"] }
-tokio = { version = "1", features = ["full"] }
-anyhow = "1.0.98"
-inquire = "0.7.5"
-toml_edit = "0.23.2"
-fs-err = { version = "3.1.1", features = ["tokio"] }
-reqwest = "0.12.22"
-http-cache-reqwest = "0.16.0"
-reqwest-middleware = "0.4.2"
-resvg = "0.45.1"
-image = "0.25.6"
-tiny-skia = "0.11.4"
-usvg = "0.45.1"
-libm = "0.2.15"
-rand = "0.9.2"
-lazy_static = "1.5.0"
-itertools = "0.14.0"
-pastey = "0.1.0"
-regex = "1.11.1"
+# Five hundred features
 
 [features]
-indev = []
+default = [
+"image",
+"serde",
+"svg",
+
+"output_codegen",
+"output_dirs",
+
+"source_fluent",
+"source_font_awesome",
+"source_luicide",
+"source_material_symbols",
+"source_path",
+]
+
+bin = [
+"dep:clap",
+"dep:tokio",
+"dep:clap-verbosity-flag",
+"dep:console",
+"dep:env_logger",
+"dep:toml",
+]
+
+output_codegen = [
+"output_codegen_luau",
+"output_codegen_ts",
+"output_codegen_dts",
+"output_codegen_json",
+"output_codegen_yaml",
+"output_codegen_toml",
+]
+
+output_codegen_luau = ["_output_codegen"]
+output_codegen_dts = ["_output_codegen"]
+output_codegen_ts = ["_output_codegen"]
+output_codegen_json = ["_output_codegen"]
+output_codegen_yaml = ["_output_codegen"]
+output_codegen_toml = ["_output_codegen"]
+
+output_dirs = []
+
+source_font_awesome = []
+source_fluent = []
+source_luicide = []
+source_material_symbols = ["_reqwest"]
+source_path = []
+
+image = ["dep:image"]
+svg = ["dep:resvg", "dep:usvg"]
+
+serde = ["dep:serde"]
+
+_output_codegen = []
+_reqwest = ["dep:reqwest", "dep:http-cache-reqwest", "dep:reqwest-middleware"]
+
+[[bin]]
+name = "springroll"
+path = "src/main.rs"
+required-features = ["bin"]
+
+[dependencies]
+anyhow = "1.0.98"
+clap = { version = "4.5.41", features = ["derive"], optional = true }
+clap-verbosity-flag = { version = "3.0.3", optional = true }
+console = { version = "0.16.0", optional = true }
+env_logger = { version = "0.11.8", optional = true }
+http-cache-reqwest = { version = "0.16.0", optional = true }
+image = { version = "0.25.6", optional = true }
+itertools = "0.14.0"
+lazy_static = "1.5.0"
+log = "0.4.27"
+pastey = "0.1.0"
+regex = "1.11.1"
+reqwest = { version = "0.12.22", optional = true }
+reqwest-middleware = { version = "0.4.2", optional = true }
+resvg = { version = "0.45.1", optional = true }
+serde = { version = "1.0.219", features = ["derive"], optional = true }
+tiny-skia = "0.11.4"
+tokio = { version = "1", features = ["full"], optional = true }
+toml = { version = "0.9.2", optional = true }
+usvg = { version = "0.45.1", optional = true }

@@ -1,8 +1,15 @@
+#[cfg(feature = "output_codegen_json")]
 pub mod json;
+#[cfg(feature = "output_codegen_luau")]
 pub mod luau;
+#[cfg(feature = "output_codegen_toml")]
 pub mod toml;
+#[cfg(feature = "output_codegen_ts")]
 pub mod typescript;
+#[cfg(feature = "output_codegen_dts")]
 pub mod typescript_declarations;
+#[cfg(feature = "output_codegen_yaml")]
+pub mod yaml;
 
 #[inline]
 pub fn create_disclaimer_comment(comment_prefix: &'static str) -> String {

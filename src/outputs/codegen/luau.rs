@@ -4,37 +4,37 @@ use anyhow::{Context, Result};
 use lazy_static::lazy_static;
 use regex::Regex;
 use serde::Deserialize;
-use tokio::fs;
+use std::fs;
 
 use super::create_disclaimer_comment;
-use crate::{
-    match_casings,
-    spritegen::{Sprite, Spritesheet},
-    util::casings::Casing,
-};
+use crate::{Sprite, Spritesheet, match_casings, util::casings::Casing};
 
-#[derive(Default, Debug, Deserialize, Clone)]
-#[serde(default)]
+#[derive(Default, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
+#[cfg_attr(feature = "serde", serde(default))]
 pub struct LuauCodegenOutput {
     pub path: PathBuf,
     pub include_prelude_types: bool,
     pub new_luau_solver: bool,
-    #[serde(default = "default_true")]
+    #[cfg_attr(feature = "serde", serde(default = "default_true"))]
     pub freeze_tables: bool,
-    #[serde(default = "default_snake")]
+    #[cfg_attr(feature = "serde", serde(default = "default_snake"))]
     pub type_casing: Casing,
-    #[serde(default = "default_pascal")]
+    #[cfg_attr(feature = "serde", serde(default = "default_pascal"))]
     pub field_casing: Casing,
 }
 
+#[cfg(feature = "serde")]
 fn default_true() -> bool {
     true
 }
 
+#[cfg(feature = "serde")]
 fn default_snake() -> Casing {
     Casing::Snake
 }
 
+#[cfg(feature = "serde")]
 fn default_pascal() -> Casing {
     Casing::Pascal
 }
@@ -92,7 +92,6 @@ fn wrap_luau_ident(str: &str) -> String {
 impl LuauCodegenOutput {
     pub async fn output(&self, name: &str, spritesheet: &Spritesheet) -> Result<()> {
         fs::write(&self.path, self.codegen(name, spritesheet))
-            .await
             .context("failed to save luau codegen output")?;
 
         Ok(())

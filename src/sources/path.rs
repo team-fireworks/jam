@@ -7,7 +7,8 @@ use usvg::{Options, Tree};
 
 use crate::sources::SpriteSource;
 
-#[derive(Debug, Deserialize, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
 pub struct PathSource {
     path: PathBuf,
 }
@@ -22,10 +23,10 @@ impl PathSource {
                     .context("file extension is not valid UTF-8")?;
 
                 match extension {
-                    "png" => Ok(SpriteSource::Raster(
+                    "png" => Ok(SpriteSource::Pixmap(
                         Pixmap::load_png(&self.path).context("failed to load png file")?,
                     )),
-                    "svg" => Ok(SpriteSource::Vector(
+                    "svg" => Ok(SpriteSource::Tree(
                         Tree::from_str(
                             fs::read_to_string(&self.path)
                                 .context("failed to read svg file")?
