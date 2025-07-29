@@ -29,14 +29,28 @@ pub enum OutputSpecifier {
 }
 
 impl OutputSpecifier {
+    pub fn output_type(&self) -> String {
+        match self {
+            #[cfg(feature = "output_codegen_luau")]
+            Self::Luau(_) => "luau",
+            #[cfg(feature = "output_codegen_ts")]
+            Self::TypeScript(_) => "ts",
+            #[cfg(feature = "output_codegen_dts")]
+            Self::TypeScriptDeclarations(_) => "dts",
+            #[allow(unreachable_patterns)]
+            _ => "unknown",
+        }
+        .to_string()
+    }
+
     pub async fn output(&self, name: &str, spritesheet: &Spritesheet) -> Result<()> {
         match self {
             #[cfg(feature = "output_codegen_luau")]
-            OutputSpecifier::Luau(luau) => luau.output(name, spritesheet).await,
+            Self::Luau(luau) => luau.output(name, spritesheet).await,
             #[cfg(feature = "output_codegen_ts")]
-            OutputSpecifier::TypeScript(ts) => ts.output(name, spritesheet).await,
+            Self::TypeScript(ts) => ts.output(name, spritesheet).await,
             #[cfg(feature = "output_codegen_dts")]
-            OutputSpecifier::TypeScriptDeclarations(dts) => dts.output(name, spritesheet).await,
+            Self::TypeScriptDeclarations(dts) => dts.output(name, spritesheet).await,
             #[allow(unreachable_patterns)]
             _ => bail!("not yet supported"),
         }

@@ -6,17 +6,33 @@ use clap::{
     builder::{Styles, styling::AnsiColor},
 };
 use clap_verbosity_flag::Verbosity;
+use console::style;
+use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use itertools::Itertools;
 use springroll::{Config, SpritesheetSpecifier, spritegen};
 use tokio::task::JoinSet;
 
 const STYLES: Styles = Styles::styled()
-    .header(AnsiColor::Red.on_default().underline())
-    .usage(AnsiColor::Red.on_default().underline())
+    .header(AnsiColor::Green.on_default().underline())
+    .usage(AnsiColor::Green.on_default().underline())
     .literal(AnsiColor::Cyan.on_default().bold())
-    .placeholder(AnsiColor::Yellow.on_default());
+    .placeholder(AnsiColor::Magenta.on_default());
 
 const CONFIG_FILE_NAME: &str = "Springroll.toml";
+
+fn create_progress_style() -> ProgressStyle {
+    ProgressStyle::with_template(format!(
+        "{{prefix:18}}{{msg:32.green.dim}}{{bar:32.magenta/.white.dim}} {{pos:.green}}{}{{len:.green}} {{elapsed:.green.dim}}",
+        style("/").green()
+    ).as_str()).unwrap().progress_chars("━╸━")
+}
+
+fn create_finished_progress_style() -> ProgressStyle {
+    ProgressStyle::with_template(format!(
+        "{{prefix:18}}{{msg:32.green.dim}}{{bar:32.green}} {{pos:.green}}{}{{len:.green}} {{elapsed:.green.dim}}",
+        style("/").green()
+    ).as_str()).unwrap().progress_chars("━━━")
+}
 
 #[derive(Parser, Debug)]
 #[command(version, about = "Pack images into spritesheets and easily reference them in code.", styles = STYLES)]
@@ -66,22 +82,42 @@ async fn main() -> anyhow::Result<()> {
         .context("failed to create reqwest client")?;
 
     let mut outputs = JoinSet::new();
+    let bars = MultiProgress::new();
+
+    println!("{}", style("Generating spritesheets...").dim());
 
     for (key, spec) in specs {
         let reqwest = reqwest.clone();
 
+        let progress = bars.add(
+            ProgressBar::new((spec.sprites.len() * 2 + spec.outputs.len()) as u64)
+                .with_style(create_progress_style())
+                .with_prefix(key.clone()),
+        );
+
+        progress.tick();
+
         outputs.spawn(async move {
-            let spritesheet = spritegen(&spec, reqwest)
+            let spritesheet = spritegen(&spec, reqwest, Some(&progress))
                 .await
                 .context("failed to generate spritesheets")?;
 
-            for output in &spec.outputs {
+            for (index, output) in spec.outputs.iter().enumerate() {
+                progress.set_message(format!(
+                    "Outputting #{} ({})...",
+                    index + 1,
+                    output.output_type()
+                ));
+                progress.inc(1);
+
                 output
                     .output(&key, &spritesheet)
                     .await
                     .context("failed to output")?;
             }
 
+            progress.set_style(create_finished_progress_style());
+            progress.finish_with_message("Finished!");
             anyhow::Ok(())
         });
     }

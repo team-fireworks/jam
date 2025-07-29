@@ -7,6 +7,9 @@ use crate::{
     outputs::OutputSpecifier,
     sources::{SpriteSource, SpriteSpecifier},
 };
+#[cfg(feature = "bin")]
+use indicatif::ProgressBar;
+use log::warn;
 use serde::Deserialize;
 use std::collections::HashMap;
 use tiny_skia::{Pixmap, PixmapPaint, Transform};
@@ -49,6 +52,7 @@ pub struct Spritesheet {
 pub async fn spritegen(
     spritesheet: &SpritesheetSpecifier,
     reqwest: reqwest::Client,
+    #[cfg(feature = "bin")] progress: Option<&ProgressBar>,
 ) -> anyhow::Result<Spritesheet> {
     let spritesheet_size = spritesheet.spritegen.spritesheet_size;
 
@@ -71,8 +75,20 @@ pub async fn spritegen(
     let mut sprites_for_spritesheet: HashMap<String, Sprite> = HashMap::new();
 
     for (sprite_key, specifier) in sorted_sprites {
+        #[cfg(feature = "bin")]
+        if let Some(progress) = progress {
+            progress.set_message(format!("Fetching {}...", sprite_key.clone()));
+            progress.inc(1);
+        }
+
         match specifier.fetch(reqwest.clone()).await {
             Ok(source) => {
+                #[cfg(feature = "bin")]
+                if let Some(progress) = progress {
+                    progress.set_message(format!("Rendering {}...", sprite_key.clone()));
+                    progress.inc(1);
+                }
+
                 let (width, height) = match &source {
                     SpriteSource::Pixmap(pixmap) => (pixmap.width() as f32, pixmap.height() as f32),
                     #[cfg(feature = "svg")]
@@ -136,7 +152,11 @@ pub async fn spritegen(
                 }
             }
             Err(e) => {
-                println!("failed to fetch sprite {}: {}", sprite_key, e);
+                warn!("failed to fetch sprite {}: {}", sprite_key, e);
+                #[cfg(feature = "bin")]
+                if let Some(progress) = progress {
+                    progress.inc(1);
+                }
                 continue;
             }
         }
