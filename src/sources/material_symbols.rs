@@ -10,8 +10,9 @@ const MATERIAL_SYMBOLS_URL: &str =
 const PATH: &str = "<path ";
 const PATH_REPLACE_WITH_WHITE_FILL: &str = "<path fill=\"#fff\" ";
 
-#[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq, Hash)]
-#[serde(rename_all = "snake_case")]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
 pub enum MaterialSymbolsStyle {
     #[default]
     Outlined,
@@ -29,8 +30,9 @@ impl MaterialSymbolsStyle {
     }
 }
 
-#[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq, Hash)]
-#[serde(rename_all = "snake_case")]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
 pub enum MaterialSymbolsVariant {
     Filled,
     #[default]
@@ -48,13 +50,13 @@ impl MaterialSymbolsVariant {
 
 #[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq, Hash)]
 pub enum MaterialSymbolsSize {
-    #[serde(rename = "20px")]
+    #[cfg_attr(feature = "serde", serde(rename = "20px"))]
     Size20px,
-    #[serde(rename = "24px")]
+    #[cfg_attr(feature = "serde", serde(rename = "24px"))]
     Size24px,
-    #[serde(rename = "40px")]
+    #[cfg_attr(feature = "serde", serde(rename = "40px"))]
     Size40px,
-    #[serde(rename = "48px")]
+    #[cfg_attr(feature = "serde", serde(rename = "48px"))]
     #[default]
     Size48px,
 }
@@ -70,22 +72,24 @@ impl MaterialSymbolsSize {
     }
 }
 
-#[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
 pub enum MaterialSymbolsWeight {
-    #[serde(rename = "100")]
+    #[cfg_attr(feature = "serde", serde(rename = "100"))]
     Weight100,
-    #[serde(rename = "200")]
+    #[cfg_attr(feature = "serde", serde(rename = "200"))]
     Weight200,
-    #[serde(rename = "300")]
+    #[cfg_attr(feature = "serde", serde(rename = "300"))]
     Weight300,
-    #[serde(rename = "400")]
+    #[cfg_attr(feature = "serde", serde(rename = "400"))]
     #[default]
     Weight400,
-    #[serde(rename = "500")]
+    #[cfg_attr(feature = "serde", serde(rename = "500"))]
     Weight500,
-    #[serde(rename = "600")]
+    #[cfg_attr(feature = "serde", serde(rename = "600"))]
     Weight600,
-    #[serde(rename = "700")]
+    #[cfg_attr(feature = "serde", serde(rename = "700"))]
     Weight700,
 }
 
@@ -103,14 +107,16 @@ impl MaterialSymbolsWeight {
     }
 }
 
-#[derive(Debug, Default, Deserialize, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
 pub enum MaterialSymbolsGrade {
-    #[serde(rename = "-25")]
+    #[cfg_attr(feature = "serde", serde(rename = "-25"))]
     GradeNegative25 = -25,
-    #[serde(rename = "0")]
+    #[cfg_attr(feature = "serde", serde(rename = "0"))]
     #[default]
     Grade0 = 0,
-    #[serde(rename = "200")]
+    #[cfg_attr(feature = "serde", serde(rename = "200"))]
     Grade200 = 200,
 }
 
@@ -124,19 +130,21 @@ impl MaterialSymbolsGrade {
     }
 }
 
-#[derive(Debug, Deserialize, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
 pub struct MaterialSymbolsSource {
-    #[serde(rename = "material_symbols")]
+    #[cfg_attr(feature = "serde", serde(rename = "material_symbols"))]
     symbol: String,
-    #[serde(default)]
+    #[cfg_attr(feature = "serde", serde(default))]
     style: MaterialSymbolsStyle,
-    #[serde(default)]
+    #[cfg_attr(feature = "serde", serde(default))]
     variant: MaterialSymbolsVariant,
-    #[serde(default)]
+    #[cfg_attr(feature = "serde", serde(default))]
     weight: MaterialSymbolsWeight,
-    #[serde(default)]
+    #[cfg_attr(feature = "serde", serde(default))]
     grade: MaterialSymbolsGrade,
-    #[serde(default)]
+    #[cfg_attr(feature = "serde", serde(default))]
     size: MaterialSymbolsSize,
 }
 

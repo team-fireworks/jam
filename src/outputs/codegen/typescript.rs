@@ -66,7 +66,7 @@ impl TypeScriptCodegenOutput {
         match self.export.clone() {
             TypeScriptExport::Consts => (),
             namespace => {
-                footer.push_str("}");
+                footer.push('}');
                 footer.push('\n');
 
                 code.push_str(match namespace {
@@ -135,7 +135,7 @@ impl TypeScriptCodegenOutput {
             push_field!(self.ident_height(), format!("{}", sprite.height).as_str());
 
             code.push_str(indent.as_str());
-            code.push_str("}");
+            code.push('}');
             code.push(';');
             code.push('\n');
         }

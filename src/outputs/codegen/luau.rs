@@ -78,11 +78,11 @@ fn is_luau_keyword(str: &str) -> bool {
 /// characters, use alphanumeric characters and underscores, and not start with
 /// a number.
 fn is_luau_ident(str: &str) -> bool {
-    str.len() > 0 && !is_luau_keyword(str) && LUAU_IDENTIFIER_REGEX.is_match(str)
+    !str.is_empty() && !is_luau_keyword(str) && LUAU_IDENTIFIER_REGEX.is_match(str)
 }
 
 fn wrap_luau_ident(str: &str) -> String {
-    if is_luau_ident(&str) {
+    if is_luau_ident(str) {
         str.to_string()
     } else {
         format!("[\"{str}\"]")

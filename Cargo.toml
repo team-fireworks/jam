@@ -33,6 +33,7 @@ bin = [
 "dep:console",
 "dep:env_logger",
 "dep:toml",
+"dep:indicatif",
 ]
 
 output_codegen = [
@@ -55,8 +56,8 @@ output_dirs = []
 
 source_font_awesome = []
 source_fluent = []
-source_luicide = []
-source_material_symbols = ["_reqwest"]
+source_luicide = ["_reqwest", "svg"]
+source_material_symbols = ["_reqwest", "svg"]
 source_path = []
 
 image = ["dep:image"]
@@ -80,6 +81,7 @@ console = { version = "0.16.0", optional = true }
 env_logger = { version = "0.11.8", optional = true }
 http-cache-reqwest = { version = "0.16.0", optional = true }
 image = { version = "0.25.6", optional = true }
+indicatif = { version = "0.18.0", optional = true }
 itertools = "0.14.0"
 lazy_static = "1.5.0"
 log = "0.4.27"

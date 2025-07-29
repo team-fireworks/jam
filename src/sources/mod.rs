@@ -41,10 +41,12 @@ pub enum SpriteSource {
 impl SpriteSpecifier {
     pub async fn fetch(&self, reqwest: reqwest::Client) -> anyhow::Result<SpriteSource> {
         Ok(match self {
-            #[cfg(feature = "source_path")]
-            Self::Path(path) => path.fetch().await?,
+            #[cfg(feature = "source_luicide")]
+            Self::Luicide(luicide) => luicide.fetch(reqwest.clone()).await?,
             #[cfg(feature = "source_material_symbols")]
             Self::MaterialSymbols(material) => material.fetch(reqwest.clone()).await?,
+            #[cfg(feature = "source_path")]
+            Self::Path(path) => path.fetch().await?,
             #[allow(unreachable_patterns)]
             _ => bail!("not yet supported"),
         })

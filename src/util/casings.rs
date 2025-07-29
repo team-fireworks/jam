@@ -24,7 +24,7 @@ pub enum Casing {
 #[macro_export]
 macro_rules! match_casings {
     ($casing: expr => $ident: ident) => {{
-        use crate::util::casings::Casing;
+        use $crate::util::casings::Casing;
         use pastey::paste;
         paste! {
             match $casing {

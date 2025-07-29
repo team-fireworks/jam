@@ -1,7 +1,8 @@
 use serde::Deserialize;
 
-#[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq, Hash)]
-#[serde(rename_all = "snake_case")]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
 pub enum FontAwesomeStyle {
     #[default]
     Solid,
@@ -10,8 +11,9 @@ pub enum FontAwesomeStyle {
     Thin,
 }
 
-#[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq, Hash)]
-#[serde(rename_all = "snake_case")]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
 pub enum FontAwesomePack {
     Brand,
     #[default]
@@ -21,9 +23,11 @@ pub enum FontAwesomePack {
     SharpDuotone,
 }
 
-#[derive(Debug, Deserialize, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
 pub struct FontAwesomeSource {
-    #[serde(rename = "font_awesome")]
+    #[cfg_attr(feature = "serde", serde(rename = "font_awesome"))]
     icon: String,
     #[serde(default)]
     style: FontAwesomeStyle,

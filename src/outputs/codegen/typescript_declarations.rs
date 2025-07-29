@@ -74,7 +74,7 @@ impl TypeScriptDeclarationsCodegenOutput {
             code.push('\n');
         }
 
-        code.push_str("}");
+        code.push('}');
         code.push('\n');
         code.push('\n');
         code.push_str("export = ");
