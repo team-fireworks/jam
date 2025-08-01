@@ -44,34 +44,34 @@ lazy_static! {
 }
 
 fn is_luau_keyword(str: &str) -> bool {
-    match str {
-        "and" => true,
-        "break" => true,
-        "continue" => true,
-        "do" => true,
-        "else" => true,
-        "elseif" => true,
-        "end" => true,
-        "export" => true,
-        "false" => true,
-        "for" => true,
-        "function" => true,
-        "if" => true,
-        "in" => true,
-        "local" => true,
-        "nil" => true,
-        "not" => true,
-        "or" => true,
-        "repeat" => true,
-        "return" => true,
-        "self" => true,
-        "then" => true,
-        "type" => true,
-        "typeof" => true,
-        "until" => true,
-        "while" => true,
-        _ => false,
-    }
+    matches!(
+        str,
+        "and"
+            | "break"
+            | "continue"
+            | "do"
+            | "else"
+            | "elseif"
+            | "end"
+            | "export"
+            | "false"
+            | "for"
+            | "function"
+            | "if"
+            | "in"
+            | "local"
+            | "nil"
+            | "not"
+            | "or"
+            | "repeat"
+            | "return"
+            | "self"
+            | "then"
+            | "type"
+            | "typeof"
+            | "until"
+            | "while"
+    )
 }
 
 /// Checks if a string is a valid Luau identifier, which is longer than 0
@@ -171,9 +171,9 @@ impl LuauCodegenOutput {
     pub fn wrap_sprite(&self, sprite: &Sprite) -> String {
         // typa shit pirate software would defend but okay
         let inner = format!(
-            "{{ {} = {}, {} = {}, {} = {}, {} = {}, {} = {} }}",
+            "{{ {} = \"{}\", {} = {}, {} = {}, {} = {}, {} = {} }}",
             self.ident_spritesheet(),
-            "\"todo lololol\"",
+            sprite.pixmap_key,
             self.ident_x(),
             sprite.x,
             self.ident_y(),

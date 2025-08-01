@@ -98,7 +98,7 @@ async fn main() -> anyhow::Result<()> {
         progress.tick();
 
         outputs.spawn(async move {
-            let spritesheet = spritegen(&spec, reqwest, Some(&progress))
+            let spritesheet = spritegen(&key, &spec, reqwest, Some(&progress))
                 .await
                 .context("failed to generate spritesheets")?;
 

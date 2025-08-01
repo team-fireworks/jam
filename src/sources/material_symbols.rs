@@ -174,7 +174,6 @@ impl MaterialSymbolsSource {
         )
     }
 
-    #[must_use]
     pub fn url(&self) -> anyhow::Result<Url> {
         Ok(Url::parse(
             format!(

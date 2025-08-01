@@ -8,7 +8,7 @@ description = "Spritesheets as code"
 repository = "https://github.com/team-fireworks/springroll"
 include = ["src/**/*", "Cargo.toml", "Cargo.lock", "README.md"]
 
-# Five hundred features
+# "Five hundred cigarettes" ahh features
 
 [features]
 default = [
@@ -17,7 +17,7 @@ default = [
 "svg",
 
 "output_codegen",
-"output_dirs",
+"output_dir",
 
 "source_fluent",
 "source_font_awesome",
@@ -52,7 +52,7 @@ output_codegen_json = ["_output_codegen"]
 output_codegen_yaml = ["_output_codegen"]
 output_codegen_toml = ["_output_codegen"]
 
-output_dirs = []
+output_dir = []
 
 source_font_awesome = []
 source_fluent = []
@@ -95,3 +95,8 @@ tiny-skia = "0.11.4"
 tokio = { version = "1", features = ["full"], optional = true }
 toml = { version = "0.9.2", optional = true }
 usvg = { version = "0.45.1", optional = true }
+
+# The profile that 'dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"

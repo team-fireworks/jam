@@ -128,7 +128,10 @@ impl TypeScriptCodegenOutput {
             code.push_str(" = {");
             code.push('\n');
 
-            push_field!(self.ident_spritesheet(), "\"todo lolol\"");
+            push_field!(
+                self.ident_spritesheet(),
+                format!("\"{}\"", sprite.pixmap_key).as_str()
+            );
             push_field!(self.ident_x(), format!("{}", sprite.x).as_str());
             push_field!(self.ident_y(), format!("{}", sprite.y).as_str());
             push_field!(self.ident_width(), format!("{}", sprite.width).as_str());

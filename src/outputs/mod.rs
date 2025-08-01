@@ -5,7 +5,7 @@ use crate::Spritesheet;
 
 #[cfg(feature = "_output_codegen")]
 pub mod codegen;
-#[cfg(feature = "output_dirs")]
+#[cfg(feature = "output_dir")]
 pub mod dir;
 
 #[derive(Debug, Clone)]
@@ -26,6 +26,8 @@ pub enum OutputSpecifier {
     TypeScriptDeclarations(
         self::codegen::typescript_declarations::TypeScriptDeclarationsCodegenOutput,
     ),
+    #[cfg(feature = "output_dir")]
+    Dir(self::dir::DirOutput),
 }
 
 impl OutputSpecifier {
@@ -37,6 +39,8 @@ impl OutputSpecifier {
             Self::TypeScript(_) => "ts",
             #[cfg(feature = "output_codegen_dts")]
             Self::TypeScriptDeclarations(_) => "dts",
+            #[cfg(feature = "output_dir")]
+            Self::Dir(_) => "dir",
             #[allow(unreachable_patterns)]
             _ => "unknown",
         }
@@ -51,6 +55,8 @@ impl OutputSpecifier {
             Self::TypeScript(ts) => ts.output(name, spritesheet).await,
             #[cfg(feature = "output_codegen_dts")]
             Self::TypeScriptDeclarations(dts) => dts.output(name, spritesheet).await,
+            #[cfg(feature = "output_dir")]
+            Self::Dir(dir) => dir.output(name, spritesheet).await,
             #[allow(unreachable_patterns)]
             _ => bail!("not yet supported"),
         }

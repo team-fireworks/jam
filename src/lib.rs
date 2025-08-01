@@ -28,6 +28,13 @@ pub struct SpritesheetSpecifier {
 pub struct Spritegen {
     pub spritesheet_size: u32,
     pub sprites_per_row: u32,
+    #[cfg_attr(feature = "serde", serde(default = "default_name_format"))]
+    pub name_format: String,
+}
+
+#[cfg(feature = "serde")]
+fn default_name_format() -> String {
+    "$name$index".to_string()
 }
 
 #[derive(Debug, Clone)]
@@ -37,7 +44,7 @@ pub struct Config {
 }
 
 pub struct Sprite {
-    pub pixmap_index: i32,
+    pub pixmap_key: String,
     pub x: u32,
     pub y: u32,
     pub width: u32,
@@ -45,19 +52,29 @@ pub struct Sprite {
 }
 
 pub struct Spritesheet {
-    pub pixmaps: Vec<Pixmap>,
+    pub pixmaps: HashMap<String, Pixmap>,
     pub sprites: HashMap<String, Sprite>,
 }
 
+// TODO: proper asts
+pub(crate) fn format_spritegen_name(format: &str, name: &str, index: &usize) -> String {
+    format
+        .replace("$name", name)
+        .replace("$index", index.to_string().as_str())
+}
+
 pub async fn spritegen(
+    name: &str,
     spritesheet: &SpritesheetSpecifier,
     reqwest: reqwest::Client,
     #[cfg(feature = "bin")] progress: Option<&ProgressBar>,
 ) -> anyhow::Result<Spritesheet> {
     let spritesheet_size = spritesheet.spritegen.spritesheet_size;
 
-    let mut pixmaps: Vec<Pixmap> = Vec::new();
+    let mut pixmaps: HashMap<String, Pixmap> = HashMap::new();
     let mut pixmap_index = 0;
+    let mut pixmap_key =
+        format_spritegen_name(&spritesheet.spritegen.name_format, name, &pixmap_index);
 
     let mut current_spritesheet: Pixmap = Pixmap::new(spritesheet_size, spritesheet_size).unwrap();
 
@@ -120,7 +137,7 @@ pub async fn spritegen(
                 };
 
                 sprites_for_spritesheet.insert(sprite_key.clone(), Sprite {
-                    pixmap_index,
+                    pixmap_key: pixmap_key.clone(),
                     x: current_x as u32,
                     y: current_y as u32,
                     width: width as u32,
@@ -145,7 +162,12 @@ pub async fn spritegen(
                         current_x = 0;
                         current_y = 0;
                         pixmap_index += 1;
-                        pixmaps.push(current_spritesheet.clone());
+                        pixmaps.insert(pixmap_key.clone(), current_spritesheet.clone());
+                        pixmap_key = format_spritegen_name(
+                            &spritesheet.spritegen.name_format,
+                            name,
+                            &pixmap_index,
+                        );
                         current_spritesheet =
                             Pixmap::new(spritesheet_size, spritesheet_size).unwrap();
                     }
@@ -163,7 +185,7 @@ pub async fn spritegen(
     }
 
     if current_x > 0 || current_y > 0 || pixmaps.is_empty() {
-        pixmaps.push(current_spritesheet);
+        pixmaps.insert(pixmap_key, current_spritesheet.clone());
     }
 
     Ok(Spritesheet {
