@@ -6,7 +6,7 @@ Spritesheets as code command line tool.
 > This is my first actual Rust project. I struggled making this, so PRs are very
 > welcome :)
 > 
-> Documentation later :)
+> Documentation later 
 
 ## Features
 
